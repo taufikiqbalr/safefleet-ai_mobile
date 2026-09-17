@@ -145,7 +145,7 @@ M0 targets:
 - Android Studio with JDK 17;
 - Android SDK 35;
 - minSdk 26;
-- Gradle Wrapper committed to the repository;
+- Gradle 8.10.2 pinned in CI; Android Studio can import the Gradle project directly;
 - backend URL supplied through Gradle properties / BuildConfig rather than hard-coded production endpoints.
 
 Local backend remains Docker-based; the Android application itself is built with Gradle and runs on an emulator or physical Android device.
