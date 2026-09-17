@@ -16,7 +16,11 @@ class DrowsinessEngineTest {
 
     @Test
     fun `counts closure in blink duration range as blink`() {
-        val engine = DrowsinessEngine().apply { updateProfile(testProfile()) }
+        val blinkOnlyProfile = testProfile().copy(
+            perclosCautionPercent = 70.0,
+            perclosDrowsyPercent = 90.0,
+        )
+        val engine = DrowsinessEngine().apply { updateProfile(blinkOnlyProfile) }
 
         engine.observe(metrics(timestamp = 0, ear = 0.30))
         engine.observe(metrics(timestamp = 100, ear = 0.20))
