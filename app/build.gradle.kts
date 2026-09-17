@@ -1,9 +1,12 @@
+import de.undercouch.gradle.tasks.download.Download
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.kapt")
     id("com.google.dagger.hilt.android")
+    id("de.undercouch.download")
 }
 
 android {
@@ -14,8 +17,8 @@ android {
         applicationId = "com.safefleet.ai.mobile"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -83,10 +86,11 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.53.1")
     kapt("com.google.dagger:hilt-compiler:2.53.1")
 
-    implementation("androidx.camera:camera-core:1.4.1")
-    implementation("androidx.camera:camera-camera2:1.4.1")
-    implementation("androidx.camera:camera-lifecycle:1.4.1")
-    implementation("androidx.camera:camera-view:1.4.1")
+    implementation("androidx.camera:camera-core:1.4.2")
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-view:1.4.2")
+    implementation("com.google.mediapipe:tasks-vision:1.0.0")
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
@@ -99,6 +103,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.google.code.gson:gson:2.11.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.12.01"))
@@ -108,4 +113,18 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+val faceLandmarkerAsset = file("src/main/assets/face_landmarker.task")
+val downloadFaceLandmarkerModel = tasks.register<Download>("downloadFaceLandmarkerModel") {
+    src("https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task")
+    dest(faceLandmarkerAsset)
+    overwrite(false)
+    doFirst {
+        faceLandmarkerAsset.parentFile.mkdirs()
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(downloadFaceLandmarkerModel)
 }
