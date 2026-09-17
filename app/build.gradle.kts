@@ -23,7 +23,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val apiBaseUrl = providers.gradleProperty("SAFEFLEET_API_BASE_URL")
-            .orElse("http://10.0.2.2:3000/api/v1/")
+            .orElse("http://10.0.2.2:6100/api/v1/")
             .get()
         buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
     }

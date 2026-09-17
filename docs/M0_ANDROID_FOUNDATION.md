@@ -21,10 +21,10 @@ M0 creates the buildable Android application shell used by all later SafeFleet m
 
 ## API base URL
 
-The default debug URL targets a backend running on the development machine from the Android emulator:
+The default debug URL targets the SafeFleet backend on host port `6100` from the Android emulator:
 
 ```text
-http://10.0.2.2:3000/api/v1/
+http://10.0.2.2:6100/api/v1/
 ```
 
 Override it through a Gradle property:
@@ -47,9 +47,13 @@ gradle testDebugUnitTest lintDebug assembleDebug
 
 ## Security boundary
 
-M0 establishes `CredentialVault`. Device secrets are encrypted with an AES key generated inside Android Keystore; ciphertext and IV are stored in private application preferences. M1 will use this vault for the backend-issued SafeFleet device credential.
+M0 establishes `CredentialVault`. Device secrets are encrypted with an AES key generated inside Android Keystore; ciphertext and IV are stored in private application preferences. M1 uses this vault for the backend-issued SafeFleet device credential.
 
 Release builds disable cleartext HTTP through the manifest placeholder. Production deployments should use HTTPS only.
+
+## Local port convention
+
+SafeFleet host-facing development services use the 6xxx range. Android emulator traffic targets the backend API on `6100`.
 
 ## Deliberately not implemented in M0
 
@@ -66,7 +70,7 @@ Those are implemented in M1–M5 rather than being hidden behind placeholder bus
 
 ## Next phase: M1
 
-M1 should implement secure enrollment and operational context:
+M1 implements secure enrollment and operational context:
 
 1. persistent installation UUID;
 2. pairing payload/credential import;
@@ -76,4 +80,4 @@ M1 should implement secure enrollment and operational context:
 6. mobile-authenticated trip lifecycle;
 7. permission/connectivity/device-health state.
 
-A small backend Phase 4B contract should be added before completing M1 so trip lifecycle does not depend on management-user JWT endpoints.
+The backend Phase 4B contract provides the device-authenticated runtime endpoints required by M1.

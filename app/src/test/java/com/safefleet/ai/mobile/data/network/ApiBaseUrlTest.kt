@@ -16,8 +16,8 @@ class ApiBaseUrlTest {
     @Test
     fun `normalizer preserves existing trailing slash`() {
         assertEquals(
-            "http://10.0.2.2:3000/api/v1/",
-            normalizeApiBaseUrl("http://10.0.2.2:3000/api/v1/"),
+            "http://10.0.2.2:6100/api/v1/",
+            normalizeApiBaseUrl("http://10.0.2.2:6100/api/v1/"),
         )
     }
 
