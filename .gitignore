@@ -17,6 +17,9 @@ captures/
 *.jks
 *.keystore
 
+# Downloaded MediaPipe model asset (recreated by Gradle)
+app/src/main/assets/face_landmarker.task
+
 # OS
 .DS_Store
 Thumbs.db
