@@ -21,11 +21,9 @@ Backend repository: `taufikiqbalr/safefleet-ai_backend`.
 
 ## Phased implementation
 
-### M0 — Android foundation
+### M0 — Android foundation ✅
 
-Target: reproducible Android project that builds in CI and provides the application shell for later safety features.
-
-Planned/implemented scope:
+Implemented:
 
 - Kotlin + Jetpack Compose;
 - single `app` Gradle module for MVP simplicity;
@@ -38,10 +36,12 @@ Planned/implemented scope:
 - Hilt dependency injection;
 - Coroutines/Flow;
 - environment configuration for backend URL;
-- app navigation and placeholder operational screens;
-- unit-test and Android build CI.
+- app navigation and operational shell;
+- unit-test, lint, and Android build CI.
 
-### M1 — Device enrollment and trip context
+### M1 — Device enrollment and trip context ✅
+
+Implemented:
 
 - persistent application/device UUID;
 - secure device credential storage;
@@ -51,29 +51,33 @@ Planned/implemented scope:
 - mobile-authenticated trip start/complete flow;
 - permissions/connectivity/device-health state.
 
-### M2 — Driver monitoring / computer vision
+### M2 — Driver monitoring / computer vision ✅
 
-- CameraX image-analysis pipeline;
-- face/landmark processing;
-- EAR and MAR;
-- PERCLOS observation window;
+Implemented:
+
+- CameraX front-camera image-analysis pipeline;
+- MediaPipe Face Landmarker on-device inference;
+- EAR and MAR from facial landmarks;
+- time-weighted PERCLOS observation window;
 - blink count/rate;
 - eye-closure duration;
-- yawning state/duration;
-- head pose (pitch/yaw/roll);
-- versioned/calibrated threshold profile;
-- temporal drowsiness state machine;
-- model/threshold/inference metadata.
+- yawning state/duration and repeated-yawn window;
+- approximate geometric head pose (pitch/yaw/roll);
+- versioned/calibrated threshold profile editor;
+- temporal NORMAL / CAUTION / DROWSY state engine;
+- face-loss state;
+- model/profile/inference metadata;
+- monitoring diagnostics UI.
 
-No universal EAR/MAR/PERCLOS threshold will be treated as scientifically valid by default. Threshold profiles are versioned and calibratable.
+SafeFleet does **not** ship a universal EAR/MAR/PERCLOS safety threshold. Until an explicit calibrated profile is saved, temporal classification remains `UNCALIBRATED`. Thresholds need validation for the actual camera, driver population, lighting, landmark implementation, and test protocol.
 
 ### M3 — Driver safety session
 
-- active monitoring screen;
-- foreground trip/safety session;
+- active monitoring screen integrated with trip foreground execution;
+- foreground trip/safety service;
 - local audio + vibration alarm;
 - camera/GPS/network/device state indicators;
-- face-loss/camera-unavailable handling;
+- face-loss/camera-unavailable operational handling;
 - drowsiness event generation;
 - local alarm works when backend/network is unavailable.
 
@@ -116,36 +120,42 @@ Toxic-gas thresholds are not invented in the app. They must come from the select
 ## Architecture direction
 
 ```text
-CameraX / sensors / location
-           |
-           v
-      edge processing
-           |
-           +------> immediate local alarm
-           |
-           v
-      normalized events
-           |
-           v
-        Room outbox
-           |
-     network available
-           |
-           v
-       WorkManager
-           |
-           v
-   SafeFleet Backend API
+Front Camera
+     |
+     v
+CameraX ImageAnalysis
+     |
+     v
+MediaPipe Face Landmarker
+     |
+     v
+EAR / MAR / head pose
+     |
+     v
+Temporal analysis
+PERCLOS / blink / closure / yawn
+     |
+     v
+Versioned ThresholdProfile
+     |
+     v
+Driver State
+UNCALIBRATED / NORMAL / CAUTION / DROWSY
+     |
+     +------> M3 local alarm
+     |
+     +------> M4 Room outbox -> backend
 ```
 
 ## Development environment
 
-M0 targets:
+Current mobile target:
 
 - Android Studio with JDK 17;
 - Android SDK 35;
 - minSdk 26;
-- Gradle 8.10.2 pinned in CI; Android Studio can import the Gradle project directly;
-- backend URL supplied through Gradle properties / BuildConfig rather than hard-coded production endpoints.
+- Gradle 8.10.2 pinned in CI;
+- backend URL supplied through Gradle properties / BuildConfig rather than hard-coded production endpoints;
+- MediaPipe Face Landmarker float16 v1 task downloaded into app assets by Gradle before build.
 
 Local backend remains Docker-based; the Android application itself is built with Gradle and runs on an emulator or physical Android device.
