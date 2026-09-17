@@ -51,9 +51,9 @@ Implemented:
 - mobile-authenticated trip start/complete flow;
 - permissions/connectivity/device-health state.
 
-### M2 — Driver monitoring / computer vision ✅
+### M2 — Driver monitoring / computer vision 🚧
 
-Implemented:
+In implementation:
 
 - CameraX front-camera image-analysis pipeline;
 - MediaPipe Face Landmarker on-device inference;
